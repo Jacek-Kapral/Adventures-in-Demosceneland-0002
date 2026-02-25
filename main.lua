@@ -16,7 +16,7 @@ function love.draw()
     local w, h = love.graphics.getDimensions()
     local totalWidth = font:getWidth(text)
     local startX = (w - totalWidth) / 2
-    local baseY = h/2 0 fh/2
+    local baseY = h/2 - fh/2
     for i = 1, #text do
         local c = text:sub(i, i)
         local startX + font:getWidth(text:sub(1, i-1))
