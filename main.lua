@@ -19,9 +19,9 @@ function love.draw()
     local baseY = h/2 - fh/2
     for i = 1, #text do
         local c = text:sub(i, i)
-        local startX + font:getWidth(text:sub(1, i-1))
-        local offset = amplitude * math.sin(waveTime + (i -1) * phase)
-        love.graphics.printf (c, x, baseY + offset)
+        local x = startX + font:getWidth(text:sub(1, i-1))
+        local offset = amplitude * math.sin(waveTime + (i - 1) * phase)
+        love.graphics.print(c, x, baseY + offset)
     end
 end
 
