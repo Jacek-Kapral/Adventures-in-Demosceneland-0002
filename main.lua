@@ -31,6 +31,14 @@ function love.update(dt)
     end
     waveTime = waveTime + dt
 end
+function love.keypressed(key)
+    if key == "r" and love.keyboard.isDown("lctrl", "rctrl") and love.keyboard.isDown("lshift", "rshift") then
+        phase = "flash"
+        phaseTime = 0
+        waveTime = 0
+        driveInOffset = nil
+    end
+end
 function love.draw()
     if phase == "flash" then
         if phaseTime < 0.25 then
