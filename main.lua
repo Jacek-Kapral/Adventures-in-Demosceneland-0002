@@ -7,16 +7,32 @@ function love.load()
     phaseTime = 0
 end
 function love.update(dt)
+    w, h = love.graphics.getDimensions()
     phaseTime = phaseTime + dt
     if phase == "flash" and phaseTime > 0.5 then
         phase = "testpattern"
         phaseTime = 0
     end
+    if phase == "testpattern" and phaseTime > 2.5 then
+        phase = "glitch"
+        phaseTime = 0
+    end
+    if phase == "glitch" and phaseTime >= 0.5 then
+        phase = "fadeout"
+        phaseTime = 0
+    end
+    if phase == "fadeout" and phaseTime > 0.8 then
+        phase = "main"
+        phaseTime = 0
+        driveInOffset = w
+    end
+    if phase == "main" and driveInOffset > 0 then
+        driveInOffset = math.max(0, driveInOffset - w * dt / 0.5)
+    end
     waveTime = waveTime + dt
 end
 function love.draw()
     if phase == "flash" then
-        local w, h = love.graphics.getDimensions()
         local duration = 0.5
         local alpha = 1 - math.min(phaseTime / duration, 1)
         local radius = phaseTime * 1000
@@ -24,7 +40,6 @@ function love.draw()
         love.graphics.setColor(1, 1, 1, alpha)
         love.graphics.circle("fill", w/2, h/2, radius, 100)
     elseif phase == "testpattern" then
-        local w, h = love.graphics.getDimensions()
         for i = 0, 7 do
             local x = i * (w/8)
             if i == 0 then
@@ -54,6 +69,17 @@ function love.draw()
         local baseY = h/2 - fh/2
         love.graphics.setColor(1, 1, 1)
         love.graphics.print(text, startX, baseY)
+    elseif phase == "glitch" then
+        love.graphics.clear(0, 0, 0)
+        if love.math.random() < 0.25 then
+            love.graphics.setColor(1, 1, 1, 0.4)
+            love.graphics.rectangle("fill", 0, 0, w, h)
+        end
+    elseif phase == "fadeout" then
+        love.graphics.clear(0, 0, 0)
+        local alpha = math.min(phaseTime / 0.8, 1)
+        love.graphics.setColor(0, 0, 0, alpha)
+        love.graphics.rectangle("fill", 0, 0, w, h)
     elseif phase == "main" then
         amplitude = 10
         wavePhase = 0.5
@@ -62,9 +88,8 @@ function love.draw()
         local text = "Adventures in Demosceneland"
         local font = love.graphics.getFont()
         local fh = font:getHeight()
-        local w, h = love.graphics.getDimensions()
         local totalWidth = font:getWidth(text)
-        local startX = (w - totalWidth) / 2
+        local startX = (w - totalWidth) / 2 + (driveInOffset or 0)
         local baseY = h/2 - fh/2
         for i = 1, #text do
             local c = text:sub(i, i)
