@@ -9,7 +9,7 @@ end
 function love.update(dt)
     w, h = love.graphics.getDimensions()
     phaseTime = phaseTime + dt
-    if phase == "flash" and phaseTime > 0.5 then
+    if phase == "flash" and phaseTime > 0.9 then
         phase = "testpattern"
         phaseTime = 0
     end
@@ -33,12 +33,19 @@ function love.update(dt)
 end
 function love.draw()
     if phase == "flash" then
-        local duration = 0.5
-        local alpha = 1 - math.min(phaseTime / duration, 1)
-        local radius = phaseTime * 1000
-        love.graphics.clear(0, 0, 0)
-        love.graphics.setColor(1, 1, 1, alpha)
-        love.graphics.circle("fill", w/2, h/2, radius, 100)
+        if phaseTime < 0.25 then
+            love.graphics.clear(0, 0, 0)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.circle("fill", w/2, h/2, 6, 32)
+        else
+            local expansionTime = phaseTime - 0.25
+            local duration = 0.65
+            local alpha = 1 - math.min(expansionTime / duration, 1)
+            local radius = expansionTime * 1000
+            love.graphics.clear(0, 0, 0)
+            love.graphics.setColor(1, 1, 1, alpha)
+            love.graphics.circle("fill", w/2, h/2, radius, 100)
+    end
     elseif phase == "testpattern" then
         for i = 0, 7 do
             local x = i * (w/8)
@@ -67,7 +74,14 @@ function love.draw()
         local totalWidth = font:getWidth(text)
         local startX = (w - totalWidth) / 2
         local baseY = h/2 - fh/2
+        local padding = 16
+        local boxW = font:getWidth(text) + 2 * padding
+        local boxH =  fh + 2 * padding
+        local boxX = (w - boxW) / 2
+        local boxY = (h - boxH) / 2
         love.graphics.setColor(1, 1, 1)
+        love.graphics.rectangle("fill", boxX, boxY, boxW, boxH)
+        love.graphics.setColor(0, 0, 0)
         love.graphics.print(text, startX, baseY)
     elseif phase == "glitch" then
         love.graphics.clear(0, 0, 0)
