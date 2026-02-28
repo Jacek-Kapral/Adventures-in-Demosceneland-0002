@@ -47,24 +47,25 @@ function love.draw()
             love.graphics.circle("fill", w/2, h/2, radius, 100)
     end
     elseif phase == "testpattern" then
+        local fadeAlpha = math.min(phaseTime / 2, 1)
         for i = 0, 7 do
             local x = i * (w/8)
             if i == 0 then
-                love.graphics.setColor(1, 0, 0)
+                love.graphics.setColor(1, 0, 0, fadeAlpha)
             elseif i == 1 then
-                love.graphics.setColor(0, 1, 0)
+                love.graphics.setColor(0, 1, 0, fadeAlpha)
             elseif i == 2 then
-                love.graphics.setColor(0, 0, 1)
+                love.graphics.setColor(0, 0, 1, fadeAlpha)
             elseif i == 3 then
-                love.graphics.setColor(1, 1, 1)
+                love.graphics.setColor(1, 1, 1, fadeAlpha)
             elseif i == 4 then
-                love.graphics.setColor(0, 1, 1)
+                love.graphics.setColor(0, 1, 1, fadeAlpha)
             elseif i == 5 then
-                love.graphics.setColor(1, 0, 1)
+                love.graphics.setColor(1, 0, 1, fadeAlpha)
             elseif i == 6 then
-                love.graphics.setColor(1, 1, 0)
+                love.graphics.setColor(1, 1, 0, fadeAlpha)
             else
-                love.graphics.setColor(0.2, 0.2, 0.2)
+                love.graphics.setColor(0.2, 0.2, 0.2, fadeAlpha)
             end
             love.graphics.rectangle("fill", x, 0, w/8, h)
         end
@@ -79,10 +80,14 @@ function love.draw()
         local boxH =  fh + 2 * padding
         local boxX = (w - boxW) / 2
         local boxY = (h - boxH) / 2
-        love.graphics.setColor(1, 1, 1)
+        love.graphics.setColor(1, 1, 1, fadeAlpha)
         love.graphics.rectangle("fill", boxX, boxY, boxW, boxH)
-        love.graphics.setColor(0, 0, 0)
+        love.graphics.setColor(0, 0, 0, fadeAlpha)
         love.graphics.print(text, startX, baseY)
+        love.graphics.setColor(0, 0, 0, 0.63)
+        for y = 0, h, 2 do
+            love.graphics.rectangle("fill", 0, y, w, 1)
+        end
     elseif phase == "glitch" then
         love.graphics.clear(0, 0, 0)
         if love.math.random() < 0.25 then
