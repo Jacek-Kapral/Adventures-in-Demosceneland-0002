@@ -102,11 +102,27 @@ function love.draw()
             love.graphics.rectangle("fill", 0, y, w, 1)
         end
     elseif phase == "glitch" then
+        local barColors = { {1,0,0}, {0,1,0}, {0,0,1}, {1,1,1}, {0,1,1}, {1,0,1}, {1,1,0}, {0.2,0.2,0.2} }
         love.graphics.clear(0, 0, 0)
-        if love.math.random() < 0.25 then
-            love.graphics.setColor(1, 1, 1, 0.4)
-            love.graphics.rectangle("fill", 0, 0, w, h)
+        local bandH = 8
+        for bandY = 0, h, bandH do
+            local offset = love.math.random(-22, 22)
+            for i = 0, 7 do
+                local c = barColors[i + 1]
+                love.graphics.setColor(c[1], c[2], c[3])
+                local bx = i * (w / 8) + offset
+                love.graphics.rectangle("fill", bx, bandY, w/8 + 2, bandH + 2)
+            end
         end
+        for _ = 1, 25 do
+            local ax = love.math.random(0, math.max(0, w - 30))
+            local ay = love.math.random(0, math.max(0, h - 20))
+            local aw = love.math.random(4, 28)
+            local ah = love.math.random(3, 14)
+            local ac = barColors[love.math.random(1, 8)]
+            love.graphics.setColor(ac[1], ac[2], ac[3])
+            love.graphics.rectangle("fill", ax, ay, aw, ah)
+        end                       
     elseif phase == "fadeout" then
         love.graphics.clear(0, 0, 0)
         local alpha = math.min(phaseTime / 0.8, 1)
