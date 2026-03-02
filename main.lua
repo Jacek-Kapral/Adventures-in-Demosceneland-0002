@@ -133,7 +133,7 @@ function love.draw()
         love.graphics.setColor(0, 0, 0, alpha)
         love.graphics.rectangle("fill", 0, 0, w, h)
     elseif phase == "main" then
-        amplitude = 10
+        amplitude = 14
         wavePhase = 0.5
         love.graphics.clear(0, 0, 0)
         love.graphics.setColor(0.15, 0.80, 0.1)
@@ -147,7 +147,8 @@ function love.draw()
         local dropDuration = 0.18
         local startY = -fh - 20
         local waveStartTime = (#text - 1) * dropDelay + dropDuration + 0.25
-        local waveDelay = 0.04
+        local waveDelay = 0.09
+        local waveSpeed = 3
         for i = 1, #text do
             local c = text:sub(i, i)
             local x = startX + font:getWidth(text:sub(1, i-1))
@@ -164,7 +165,8 @@ function love.draw()
         local waveActivation = waveStartTime + (#text - i) * waveDelay
         local waveOffset
         if phaseTime >= waveActivation then
-            waveOffset = -amplitude * math.sin(waveTime + (#text - i) * wavePhase)
+            local t = phaseTime - waveActivation
+            waveOffset = -amplitude * math.sin(t * waveSpeed)
         else
             waveOffset = 0
         end
