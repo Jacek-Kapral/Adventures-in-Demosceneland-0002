@@ -122,7 +122,11 @@ function love.draw()
             local ac = barColors[love.math.random(1, 8)]
             love.graphics.setColor(ac[1], ac[2], ac[3])
             love.graphics.rectangle("fill", ax, ay, aw, ah)
-        end                       
+        end
+        love.graphics.setColor(0, 0, 0, 0.63)
+        for y = 0, h, 2 do
+            love.graphics.rectangle("fill", 0, y, w, 1)
+        end                  
     elseif phase == "fadeout" then
         love.graphics.clear(0, 0, 0)
         local alpha = math.min(phaseTime / 0.8, 1)
@@ -137,14 +141,35 @@ function love.draw()
         local font = love.graphics.getFont()
         local fh = font:getHeight()
         local totalWidth = font:getWidth(text)
-        local startX = (w - totalWidth) / 2 + (driveInOffset or 0)
+        local startX = (w - totalWidth) / 2
         local baseY = h/2 - fh/2
+        local dropDelay = 0.06
+        local dropDuration = 0.18
+        local startY = -fh - 20
+        local waveStartTime = (#text - 1) * dropDelay + dropDuration + 0.25
+        local waveDelay = 0.04
         for i = 1, #text do
             local c = text:sub(i, i)
             local x = startX + font:getWidth(text:sub(1, i-1))
-            local offset = amplitude * math.sin(waveTime + (i - 1) * wavePhase)
-            love.graphics.print(c, x, baseY + offset)
+            local dropStart = (i - 1) * dropDelay
+            local letterY
+            if phaseTime < dropStart then
+                letterY = startY
+            elseif phaseTime < dropStart + dropDuration then
+                local progress = (phaseTime - dropStart) / dropDuration
+                letterY = startY + (baseY - startY) * progress
+            else
+                letterY = baseY
+            end
+        local waveActivation = waveStartTime + (#text - i) * waveDelay
+        local waveOffset
+        if phaseTime >= waveActivation then
+            waveOffset = -amplitude * math.sin(waveTime + (#text - i) * wavePhase)
+        else
+            waveOffset = 0
         end
+        love.graphics.print(c, x, letterY + waveOffset)
+    end
         love.graphics.setColor(0, 0, 0, 0.63)
         for y = 0, h, 2 do
             love.graphics.rectangle("fill", 0, y, w, 1)
